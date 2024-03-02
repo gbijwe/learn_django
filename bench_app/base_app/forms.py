@@ -19,5 +19,5 @@ class UserRegisterForm(UserCreationForm):
         model = CustomUsers
         fields = [
             # 'username', 'usr_type', 'password','company_id',
-            'username', 'email', 'password1', 'password2', 'usr_type',
+            'username', 'email', 'usr_type', 'password1', 'password2', 
         ]

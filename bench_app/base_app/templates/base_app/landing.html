@@ -8,20 +8,22 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>{{ title }}'s Dashboard</title>
-  </head>
-  <body>
-    <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-success text-white mb-4 mt-0 ml-0 mr-0 align-middle">
-        <h4 class="m-0">Bench App</h4>
-        <i>{{ title }}</i>
-      </nav>
-    </header>
+    <title>CORECO Bench App</title>
+    </head>
+    <body>
+        <div class="container ">
+            <div class="row justify-content-center text-center">
+                <!-- <div class="col">hi</div> -->
+                <div class="col-10 align-items-center m-2">
+                    <h3>Welcome to the bench app.</h3>
+                    <a class="btn btn-success m-1 " href="{% url 'register' %}" role="button">Sign Up</a>
+                    <a class="btn btn-outline-success m-1" href="{% url 'login' %}" role="button">Login</a>
+                    <br>
+                </div>
 
-    <div class="container-fluid ml-3 mr-3">
-      <h1><i>Hello</i>, {{ title }}</h1>
-      <h4>Welcome to your dashboard!</h4>
-    </div>
+            </div>
+            
+        </div>
     
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
