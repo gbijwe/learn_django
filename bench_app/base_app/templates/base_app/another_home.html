@@ -1,0 +1,17 @@
+{% extends "base_app/home.html" %}
+{% block content %}
+    {% csrf_token %}
+    {% for res in resource %}
+        <article class="media content-section">
+        <div class="media-body">
+          <div class="article-metadata">
+            <h3>-------------------------------------------</h3>
+            <a class="mr-2" href="#">{{ res.resource_name }}</a>
+            <small class="text-muted">{{ res.id }}</small>
+          </div>
+          <h2><a class="article-title" href="#">{{ res.resource_type }}</a></h2>
+          <p class="article-content">{{ res.description }}</p>
+        </div>
+        </article>
+    {% endfor %}
+{% endblock content %}

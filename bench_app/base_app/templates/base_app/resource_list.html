@@ -1,0 +1,59 @@
+{% extends 'base_app/home.html' %}
+{% block content %}
+<h1>List of Resources</h1>
+
+<table class="table table-striped p-3">
+  <thead class="thead-dark">
+    <tr>
+      {% if usr_type == "Company" %}
+        <th scope="col">Resource Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Resource Type</th>
+        <th scope="col">Creator</th>
+      {% else %}
+        <th scope="col">Resource Type</th>
+        {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% if usr_type == "Company" %}
+      {% for resource in resources %}
+      <tr>
+        <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
+        <td>{{ resource.description }}</td>
+        <td>{{ resource.resource_type }}</td>
+        <td>{{ resource.created_by }}</td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      {% for resource in resources %}
+        <tr>
+          <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_type_name }}</a></td>
+        </tr>
+      {% endfor %}  
+    {% endif %}
+  </tbody>
+  
+</table>
+{% if usr_type == "Company" %}
+<h3>See by Category</h3>
+<div class="container row m-3">
+    {% for resource in resources %}
+      {% ifchanged %}
+        <div class="card m-2" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ resource.resource_type }}</h5>
+          </div>
+        </div>
+      {% endifchanged %}
+    {% endfor %}
+</div>
+{% endif %}
+  {% if usr_type == "Company" %}
+    <a class="btn btn-outline-primary" href="{% url 'create-resource' %}">Add your resources</a>
+    <a class="btn btn-outline-primary" href="{% url 'land-company' %}">Back to Dashboard</a>
+  {% else %}
+    <a class="btn btn-outline-danger" href="{% url 'land-admin' %}">Back to Dashboard</a>
+    <a class="btn btn-outline-danger" href="{% url 'create-resource-type' %}">Create new resource type</a>
+  {% endif %}
+{% endblock %}

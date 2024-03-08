@@ -8,19 +8,51 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>{{ title }}'s Dashboard</title>
+    <title>{{ username }}'s Dashboard</title>
   </head>
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-success text-white mb-4 mt-0 ml-0 mr-0 align-middle">
-        <h4 class="m-0">Bench App</h4>
-        <i>{{ title }}</i>
+      <nav class="navbar navbar-expand-lg bg-success mb-4 mt-0 mx-0 justify-content-between">
+        <a class="navbar-brand text-light my-0" href="#"><h3>Bench App</h3></a>
+
+        <button class="navbar-toggler navbar-dark bg-dark" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon navbar-dark bg-dark"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+          <ul class="navbar-nav justify-content-end mb-2">
+            <li class="nav-item dropdown my-2 ml-3">
+              <a href="#" class="navbar-brand text-light my-0">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown my-2 ml-3">
+              <a href="#" class="navbar-brand text-light my-0">My Profile</a>
+            </li>
+            <li class="nav-item dropdown my-2 ml-3">
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">Logout</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+
       </nav>
     </header>
-
-    <div class="container-fluid ml-3 mr-3">
-      <h1><i>Hello</i>, {{ title }}</h1>
-      <h4>Welcome to your dashboard!</h4>
+    {% block content %}
+      <div class="container-fluid mx-3">
+        <h1><i>Hello</i>, {{ username }}</h1>
+        <h4>Welcome to the bench dashboard!</h4>
+        {% if usr_type == "Company" %}
+          <h6>You are an {{ usr_type }}.</h6>
+          <a class="btn btn-outline-primary" href="{% url 'listview' %}">See all resources.</a>
+        {% else %}
+          <h6>You are an {{ usr_type }}.</h6>
+          <a class="btn btn-outline-primary" href="{% url 'adminlistview' %}">See all resources.</a>
+        {% endif %}
+      </div>
+      <div class="container-fluid mx-3">
+       
+      </div>
+    {% endblock %}
     </div>
     
     <!-- Optional JavaScript -->

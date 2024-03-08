@@ -1,0 +1,13 @@
+{% extends 'base_app/home.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <h1>
+        <i>See you again!</i>
+    </h1>
+    <br>
+    <a class="btn btn-success" href="{% url 'login' %}">Login again?</a>
+</div>
+
+{% endblock %}

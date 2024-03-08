@@ -1,0 +1,13 @@
+{% extends 'base_app/home.html' %}
+{% block content %}
+<h1>detail view</h1>
+
+      <h4>ID: {{ object.id }}</h4>
+      <h4>Name: {{ object.resource_name }}</h4>
+      <h4>Description: {{ object.description }}</h4>
+      <h4>Resource Type: {{ object.resource_type }}</h4>
+      <h4>Company: {{ object.created_by }}</h4>
+
+      <a class="btn btn-outline-danger" href="{% url 'deleteview' object.pk %}">Delete resource</a>
+      <a class="btn btn-outline-primary" href="{% url 'listview' %}">Back to List view.</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base_app/home.html' %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}  # Renders all form fields with labels
+    <button type="submit">Create Resource</button>
+</form>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form }}  # Render form including hidden fields for existing data
+    <button type="submit">Update Resource</button>
+</form>
+{% endblock %}

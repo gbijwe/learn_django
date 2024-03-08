@@ -26,8 +26,7 @@ SECRET_KEY = "django-insecure-+rzlb%%)#5_84oq0ff1^c$ygfzru7qmq=9krs*3%^ny3z4)^i&
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '1f2a-2405-201-1003-d1dd-94d6-2f91-e69d-bd0c.ngrok-free.app',
-    '8252-2405-201-1003-d1dd-94d6-2f91-e69d-bd0c.ngrok-free.app',
+    'ac3d-2405-201-1003-d1dd-8d3c-4233-ef8f-dd04.ngrok-free.app',
     '127.0.0.1',
     'localhost',
 ]
@@ -154,4 +153,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "base_app.CustomUsers"
-LOGIN_REDIRECT_URL = "land-company"
+# LOGIN_REDIRECT_URL = "land-company"
+LOGIN_URL = 'login'
+
+NGROK_DOMAIN = "ac3d-2405-201-1003-d1dd-8d3c-4233-ef8f-dd04.ngrok-free.app"
+
+CSRF_TRUSTED_ORIGIN = [
+    NGROK_DOMAIN,
+]

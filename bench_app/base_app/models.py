@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
+from django.urls import reverse
 
 ADM = "Admin"
 CMP = "Company"
@@ -9,7 +10,7 @@ usr_choice = (
     (CMP, "Company")
 )
 
-# Create your models here.
+# User creation and manager defined here.
 
 class CustomUserManager(BaseUserManager):
 
@@ -49,3 +50,40 @@ class CustomUsers(AbstractBaseUser):
     #Magic methodsssss - still don't know what it does, something to do with ORM Queries
     class Meta: 
         db_table = "custom_users"
+
+
+    
+# Resource information
+class Resource_info(models.Model):
+    # new_key = models.AutoField(primary_key=True)  # Assuming an auto-incrementing primary key is desired
+    resource_type_name = models.CharField(max_length=255, blank=False)  # Enforce unique resource type names
+
+    def __str__(self):
+        return self.resource_type_name
+
+
+# Resource definition    
+class Resource(models.Model):
+    resource_name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    resource_type = models.ForeignKey(Resource_info, on_delete=models.CASCADE)  # Assuming resource_type is a string
+    # created_by = models.CharField(max_length=255, blank=False)
+    created_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.resource_name
+    
+    def get_absolute_url(self):
+        return reverse('detailview', kwargs={'pk': self.pk})
+
+
+# class Booking(models.Model):
+#     resource = models.ForeignKey(Resource, on_delete=models.CASCADE)  # Resource being booked
+#     booked_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)  # User who booked the resource
+#     available_date = models.DateField()
+#     booking_date = models.DateField()
+#     current_status = models.CharField(max_length=255)  # Assuming a string representation of the status
+
+#     def __str__(self):
+#         return f"Booking ID: {self.id} - Resource: {self.resource.resource_name} - Booked by: {self.booked_by.username}"
+
