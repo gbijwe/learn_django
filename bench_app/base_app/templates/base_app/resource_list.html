@@ -1,59 +1,67 @@
 {% extends 'base_app/home.html' %}
 {% block content %}
-<h1>List of Resources</h1>
+<div class="container-fluid mx-1">
+  <h1>List of Resources</h1>
 
-<table class="table table-striped p-3">
-  <thead class="thead-dark">
-    <tr>
-      {% if usr_type == "Company" %}
-        <th scope="col">Resource Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Resource Type</th>
-        <th scope="col">Creator</th>
-      {% else %}
-        <th scope="col">Resource Type</th>
-        {% endif %}
-    </tr>
-  </thead>
-  <tbody>
-    {% if usr_type == "Company" %}
-      {% for resource in resources %}
+  <table class="table table-striped p-3">
+    <thead class="thead-dark">
       <tr>
-        <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
-        <td>{{ resource.description }}</td>
-        <td>{{ resource.resource_type }}</td>
-        <td>{{ resource.created_by }}</td>
+        {% if usr_type == "Company" %}
+          <th scope="col">Resource Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Resource Type</th>
+          <th scope="col">Creator</th>
+        {% else %}
+          <th scope="col">Resource Type</th>
+          {% endif %}
       </tr>
-      {% endfor %}
-    {% else %}
-      {% for resource in resources %}
+    </thead>
+    <tbody>
+      {% if usr_type == "Company" %}
+        {% for resource in resources %}
         <tr>
-          <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_type_name }}</a></td>
+          <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
+          <td>{{ resource.description }}</td>
+          <td>{{ resource.resource_type }}</td>
+          <td>{{ resource.created_by }}</td>
         </tr>
-      {% endfor %}  
+        {% endfor %}
+      {% else %}
+        {% for resource in resources %}
+          <tr>
+            <td><a href="{% url 'admindetailview' resource.id %}">{{ resource.resource_type_name }}</a></td>
+          </tr>
+        {% endfor %}  
+      {% endif %}
+    </tbody>
+    
+  </table>
+  <div class="mt-5">
+    {% if usr_type == "Company" %}
+    <h3>See by Resource Types</h3>
+      <div class="card-deck">
+          {% for resource in resources %}
+            {% ifchanged %}
+              <div class="card text-white text-uppercase font-weight-bold  text-align-center bg-dark"  >
+                <div class="card-body">
+                  <a class="card-title">{{ resource.resource_type }}</a>
+                </div>
+              </div>
+            {% endifchanged %}
+          {% endfor %}
+      </div>
     {% endif %}
-  </tbody>
+  </div>
   
-</table>
-{% if usr_type == "Company" %}
-<h3>See by Category</h3>
-<div class="container row m-3">
-    {% for resource in resources %}
-      {% ifchanged %}
-        <div class="card m-2" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">{{ resource.resource_type }}</h5>
-          </div>
-        </div>
-      {% endifchanged %}
-    {% endfor %}
-</div>
-{% endif %}
-  {% if usr_type == "Company" %}
-    <a class="btn btn-outline-primary" href="{% url 'create-resource' %}">Add your resources</a>
+
+  <div class="container-fluid d-flex my-4 justify-content-between">
+    {% if usr_type == "Company" %}
     <a class="btn btn-outline-primary" href="{% url 'land-company' %}">Back to Dashboard</a>
+    <a class="btn btn-primary" href="{% url 'create-resource' %}">Add your resources</a>
   {% else %}
     <a class="btn btn-outline-danger" href="{% url 'land-admin' %}">Back to Dashboard</a>
     <a class="btn btn-outline-danger" href="{% url 'create-resource-type' %}">Create new resource type</a>
   {% endif %}
+  </div>
+</div>
 {% endblock %}

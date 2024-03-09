@@ -77,7 +77,7 @@ class MyListView(ListView):
     model = Resource
     template_name = 'base_app/resource_list.html'
     context_object_name = 'resources'
-    ordering = ['-id']
+    ordering = ['resource_type']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -86,6 +86,12 @@ class MyListView(ListView):
 
 class MyDetailView(DetailView):
     model = Resource
+    template_name="base_app/resource_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        return context
 
 class MyCreateView(LoginRequiredMixin, CreateView):
     model = Resource
@@ -120,13 +126,19 @@ class MyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class MyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Resource
+    success_url = '/land-company/listview'
     def test_func(self):
         curr_resource = self.get_object()
-        if self.request.user == curr_resource.created_by or self.request.user.usr_type == "Admin":
+        if self.request.user == curr_resource.created_by:
             return True
         else: 
             return False 
-            
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        return context
+                    
 
 class AdminUserMixin(LoginRequiredMixin, UserPassesTestMixin):
     
@@ -163,3 +175,41 @@ class AdminCreateTypeView(AdminUserMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         return context
+
+class AdminDetailView(DetailView):
+    model = Resource_info
+    template_name="base_app/resource_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        return context
+    
+class AdminDeleteView(AdminUserMixin, UserPassesTestMixin, DeleteView):
+    model = Resource_info
+    success_url = '/land-admin/listview'
+    template_name = "base_app/resource_info_confirm_delete.html"
+
+    def test_func(self):
+        if self.request.user.usr_type == "Admin":
+            return True
+        else: 
+            return False 
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        return context
+
+class AdminUpdateView(AdminUserMixin, UserPassesTestMixin, UpdateView):
+    model = Resource_info
+    fields = [
+        'resource_type_name'
+    ]
+    success_url = '/land-admin/listview'
+    
+    def test_func(self):
+        if self.request.user.usr_type == "Admin":
+            return True
+        else: 
+            return False 

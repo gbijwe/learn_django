@@ -1,5 +1,9 @@
 ## Problems & Solutions ##
 
+### major changes -1 ###
+- added functioning of admin and company seperately.
+- added resource type drop down menu.
+
 ### Mar 2 ###
  
 - users added through custom form in website cannot be used to login in through the login page. [different roles/types for users](https://forum.djangoproject.com/t/how-to-create-custom-users-with-different-roles-types/20772/2)

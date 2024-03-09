@@ -57,9 +57,13 @@ class CustomUsers(AbstractBaseUser):
 class Resource_info(models.Model):
     # new_key = models.AutoField(primary_key=True)  # Assuming an auto-incrementing primary key is desired
     resource_type_name = models.CharField(max_length=255, blank=False)  # Enforce unique resource type names
+    total_number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.resource_type_name
+    
+    def get_absolute_url(self):
+        return reverse('adminlistview', kwargs={'pk': self.pk})
 
 
 # Resource definition    

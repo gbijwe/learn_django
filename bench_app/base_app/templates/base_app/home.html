@@ -42,7 +42,7 @@
         <h1><i>Hello</i>, {{ username }}</h1>
         <h4>Welcome to the bench dashboard!</h4>
         {% if usr_type == "Company" %}
-          <h6>You are an {{ usr_type }}.</h6>
+          <h6>You are a {{ usr_type }}.</h6>
           <a class="btn btn-outline-primary" href="{% url 'listview' %}">See all resources.</a>
         {% else %}
           <h6>You are an {{ usr_type }}.</h6>
