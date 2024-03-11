@@ -20,11 +20,7 @@ urlpatterns = [
     path("land-company/listview/<int:pk>/", views.MyDetailView.as_view(), name="detailview"),
     path("land-company/listview/<int:pk>/update/", views.MyUpdateView.as_view(), name="updateview"),
     path("land-company/listview/<int:pk>/delete", views.MyDeleteView.as_view(), name="deleteview"),
-    # path('land-company/<int:category>/book-resource/<int:resource_id>/', views.book_resource, name='book-resource'),
-    path('book-resource/<int:resource_id>/', views.book_resource, name='bookresource'),
-    path('release-resource/<int:resource_id>/', views.release_resource, name='releaseresource'),
-    path('land-company/profile/', views.BookingView.as_view(), name="booking-view"),
-    path('land-company/profile/download', views.DownloadBookings.as_view(), name="download-view"),
+    path('land-company/<int:category>/book-resource/<int:resource_id>/', views.book_resource, name='book-resource'),
 
     # Admin 
     path("land-admin/listview/", views.AdminControlListView.as_view(), name="adminlistview"),

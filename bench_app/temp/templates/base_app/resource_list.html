@@ -2,15 +2,7 @@
 {% block content %}
 <div class="container-fluid mx-1">
   <h1>List of Resources</h1>
-  <div class="container-fluid d-flex my-4 justify-content-between">
-    {% if usr_type == "Company" %}
-    <a class="btn btn-outline-primary" href="{% url 'land-company' %}">Back to Dashboard</a>
-    <a class="btn btn-primary" href="{% url 'create-resource' %}">Add your resources</a>
-  {% else %}
-    <a class="btn btn-outline-danger" href="{% url 'land-admin' %}">Back to Dashboard</a>
-    <a class="btn btn-outline-danger" href="{% url 'create-resource-type' %}">Create new resource type</a>
-  {% endif %}
-  </div>
+
   <table class="table table-striped p-3">
     <thead class="thead-dark">
       <tr>

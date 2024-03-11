@@ -64,4 +64,14 @@ When CSRF token is added, it does not work at all, locally or no NGROK.
     Exception Value: 'AnonymousUser' object has no attribute 'usr_type'
 
 - How to give context in class-based-views? 
-    - Need to find a way so that I can use conditional formatting for the templates such as usr_type etc in ListView, CreateView, UpdateView etc
+    - Need to find a way so that I can use conditional formatting for the templates such as usr_type etc in ListView, CreateView, UpdateView 
+    
+### Mar 9 ###
+- Profile page --> Log book of all resources hired and how long hired for. (using date)
+- List view page --> Cards of Resource types and their numbers. On click, go to list view of resource type with detail
+
+
+- NoReverseMatch found: 
+    - with no arguments
+    - with (') argument
+    - with (6') argument

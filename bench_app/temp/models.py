@@ -99,12 +99,11 @@ class Booking(models.Model):
     booked_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)  # User who booked the resource
     available_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     booking_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
-    current_status = models.BooleanField(default=True)  # Assuming a string representation of the status
-    release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
+    current_status = models.BooleanField(default=False)  # Assuming a string representation of the status
 
     def __str__(self):
         return f"Booking ID: {self.id} - Resource: {self.resource.resource_name} - Booked by: {self.booked_by.username}"
     
     def get_absolute_url(self):
-        return reverse('listview', kwargs={'resource_id': self.resource_id})
+        return reverse('detailview', kwargs={'pk': self.pk})
 

@@ -17,8 +17,6 @@ from django.views.generic import (
 
 from .models import Resource, Resource_info, Booking
 import datetime
-from django.contrib.auth.decorators import login_required
-from .admin import BookingResource
 # from django.views.decorators.csrf import csrf_exempt
 # from django.utils.decorators import method_decorator 
 
@@ -260,85 +258,25 @@ class MyCategoryView(LoginRequiredMixin, ListView):
         return context
 
 
-@login_required
+
 def book_resource(request, resource_id):
   if request.method == 'POST':
     resource = Resource.objects.get(pk=resource_id)
     # Check if resource is available (implement your logic here)
-    if resource.booking_status :  # Replace with your availability check method
+    if resource.is_available():  # Replace with your availability check method
       booking = Booking.objects.create(
           resource=resource,
           booked_by=request.user,  # Access the logged-in user
-          available_date=resource.available_date,  # Replace with your logic to get available date
+          available_date=resource.get_available_date(),  # Replace with your logic to get available date
           booking_date=datetime.date.today(),  # Today's date
-          current_status=False,  # Assuming booked status
+          current_status=0,  # Assuming booked status
       )
       booking.save()
-      resource.booking_status = False
-    #   return redirect('bookresource', messages=['Resource booked successfully!'])
-      return redirect('booking-view')
+      # Redirect with success message
+      return redirect('book-resource', messages=['Resource booked successfully!'])
     else:
-      # Redirect with error message - resource is already booked
-
-      return redirect('land-company')
-    #   return redirect('listview', messages=['Resource is not available'])
+      # Redirect with error message
+      return redirect('book-resource', messages=['Resource is not available'])
   else:
-    # return redirect('listview')  # Redirect for non-POST requests
-    return HttpResponse("Method is not POST.")
-
-
-    
-
-@login_required
-def release_resource(request, resource_id):
-    if request.method == 'POST':
-        resource = Resource.objects.get(pk=resource_id)
-        print(resource.booking_status)
-        print(resource)
-        if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
-            resource.booking_status = 1  # Marking the resource as available
-            resource.release_date = datetime.date.today()  # Setting release date as today's date
-            resource.save()
-            messages.success(request, 'Resource released successfully!')
-            # return redirect('listview')
-            return HttpResponse("released resource")
-        else:
-            messages.error(request, 'Resource is already available.')
-            # return redirect('land-company')
-            return HttpResponse("not released")
-    else:
-        return HttpResponse("Method is not POST.")
-
-
-
-# View my bookings and download them in XLS file.
-
-class BookingView(LoginRequiredMixin, ListView):
-    model = Booking
-    template_name = 'base_app/my_bookings.html'
-    context_object_name = 'resources'
-
-    def get_queryset(self):
-        qs = super().get_queryset().filter(booked_by=self.request.user)
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['username'] = self.request.user.username
-        context['usr_type'] = self.request.user.usr_type
-        return context
-
-class DownloadBookings(LoginRequiredMixin, ListView):
-    model = Booking
-    template_name = 'base_app/main.html'
-    context_object_name = 'resources'
-
-    def post(self, request, **kwargs):
-        qs = self.get_queryset().filter(booked_by=self.request.user)
-        dataset = BookingResource().export(qs)
-        ds = dataset.xls
-
-        response = HttpResponse(ds, content_type='xls')
-        response['Content-Disposition'] = f"attachment; filename=posts.xls"
-
-        return response
+    return redirect('book-resource')  # Redirect for non-POST requests
+ 
