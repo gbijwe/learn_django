@@ -265,16 +265,18 @@ def book_resource(request, resource_id):
   if request.method == 'POST':
     resource = Resource.objects.get(pk=resource_id)
     # Check if resource is available (implement your logic here)
-    if resource.booking_status :  # Replace with your availability check method
+    if resource.booking_status == 1:  # Replace with your availability check method
       booking = Booking.objects.create(
           resource=resource,
+        #   res_id = resource.id,
           booked_by=request.user,  # Access the logged-in user
           available_date=resource.available_date,  # Replace with your logic to get available date
           booking_date=datetime.date.today(),  # Today's date
-          current_status=False,  # Assuming booked status
+          current_status=1,  # Assuming booked status
       )
       booking.save()
-      resource.booking_status = False
+      resource.booking_status = 0
+      resource.save()
     #   return redirect('bookresource', messages=['Resource booked successfully!'])
       return redirect('booking-view')
     else:
@@ -287,20 +289,23 @@ def book_resource(request, resource_id):
     return HttpResponse("Method is not POST.")
 
 
-    
-
 @login_required
-def release_resource(request, resource_id):
+def release_resource(request, my_id):
     if request.method == 'POST':
-        resource = Resource.objects.get(pk=resource_id)
+        resource = Resource.objects.get(id=my_id)
         print(resource.booking_status)
         print(resource)
+        # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
             resource.release_date = datetime.date.today()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
+            stat = Booking.objects.get(resource_id=my_id)
+            stat.current_status = 0
+            stat.save()
             # return redirect('listview')
+            # Booking.ojbects.models.current_status = False
             return HttpResponse("released resource")
         else:
             messages.error(request, 'Resource is already available.')
@@ -340,5 +345,10 @@ class DownloadBookings(LoginRequiredMixin, ListView):
 
         response = HttpResponse(ds, content_type='xls')
         response['Content-Disposition'] = f"attachment; filename=posts.xls"
-
         return response
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.request.user.username
+        context['usr_type'] = self.request.user.usr_type
+        return context

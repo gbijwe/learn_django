@@ -27,18 +27,16 @@
                         <td>{{ resource.resource_name }}</td>
                         <td>{{ resource.description }}</td>
                         <td>{{ resource.created_by }}</td>
-                        {% if resource.booking_status %}
+                        {% if resource.booking_status == 1 %}
                             <td>  Available </td>
                             <td>{{ resource.available_date }}</td>
-                            {% if resource.id %}
-                                <td>
-                                    <form action="{% url 'bookresource' resource.id %}" method="post" >
-                                        {% csrf_token %}
-                                        <input type="hidden" name="resource_id" value="{{ resource.id }}">
-                                        <button type="submit" class="btn btn-success">Book for me</button>
-                                      </form>
-                                </td>
-                            {% endif %}
+                            <td>
+                                <form action="{% url 'bookresource' resource.id %}" method="post" >
+                                    {% csrf_token %}
+                                    <input type="hidden" name="resource_id" value="{{ resource.id }}">
+                                    <button type="submit" class="btn btn-success">Book for me</button>
+                                    </form>
+                            </td>
                         {% else %}
                             <td> Unavailable </td>    
                             <td> -- <td>

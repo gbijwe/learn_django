@@ -6,6 +6,7 @@
   <table class="table table-striped p-3">
     <thead class="thead-dark">
       <tr>
+          <th scope="col">Resource ID</th>
           <th scope="col">Booking ID</th>
           <th scope="col">Resource Name</th>
           <th scope="col">Booked By</th>
@@ -17,16 +18,19 @@
     <tbody>
         {% for resource in resources %}
         <tr>
-          <td><a href="{% url 'detailview' resource.id %}">{{ resource.id }}</a></td>
-          <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource }}</a></td>
+          <td><a href="#">{{ resource.resource_id }}</a></td>
+          <td><a href="#">{{ resource.id }}</a></td>
+          <td><a href="{% url 'detailview' resource.resource_id %}">{{ resource.resource }}</a></td>
           <td>{{ resource.booked_by }}</td>
           <td>{{ resource.booking_date }}</td>
           <td>{{ resource.release_date }}</td>
           <td>
-            <form method="post" action="{% url 'releaseresource' resource.id %}">
+            {% if resource.current_status == 1 %}
+            <form method="post" action="{% url 'releaseresource' resource.resource_id %}">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger">Release</button>
           </form>
+            {% endif %}
             </td>
         </tr>
         {% endfor %}
