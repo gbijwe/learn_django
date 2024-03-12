@@ -44,7 +44,8 @@
         <h4>Welcome to the bench dashboard!</h4>
         {% if usr_type == "Company" %}
           <h6>You are a {{ usr_type }}.</h6>
-          <a class="btn btn-primary" href="{% url 'create-resource' %}">Add your resources</a>
+
+          <a class="btn btn-primary mt-4" href="{% url 'my-resources' %}">My Resources</a>
           <div class="mt-3">
             <h4 class="text-muted">Total Resources: {{ resources|length }}</h4>
             <h3>See by Resource Types</h3>
@@ -57,10 +58,11 @@
                 </div>
               </div>
               {% endifchanged %}
-              
               {% endfor %}
             </div>
             <a class="btn btn-outline-primary mt-4" href="{% url 'listview' %}">See all resources.</a>
+            <a class="btn btn-primary mt-4" href="{% url 'create-resource' %}">Add your resources</a>
+            
           </div>
           {% else %}
           <h6>You are an {{ usr_type }}.</h6>

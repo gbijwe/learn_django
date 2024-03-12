@@ -264,16 +264,19 @@ class MyCategoryView(LoginRequiredMixin, ListView):
 def book_resource(request, resource_id):
   if request.method == 'POST':
     resource = Resource.objects.get(pk=resource_id)
+    booking_date=datetime.date.today()
     # Check if resource is available (implement your logic here)
-    if resource.booking_status == 1:  # Replace with your availability check method
+    if resource.booking_status == 1 and resource.available_date <= booking_date:  # Replace with your availability check method
       booking = Booking.objects.create(
           resource=resource,
         #   res_id = resource.id,
           booked_by=request.user,  # Access the logged-in user
           available_date=resource.available_date,  # Replace with your logic to get available date
-          booking_date=datetime.date.today(),  # Today's date
-          current_status=1,  # Assuming booked status
+          booking_date=booking_date,  # Today's date
+          current_status=1,
+          owner = str(resource.created_by),  
       )
+      print(resource.created_by)
       booking.save()
       resource.booking_status = 0
       resource.save()
@@ -298,19 +301,18 @@ def release_resource(request, my_id):
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
-            resource.release_date = datetime.date.today()  # Setting release date as today's date
+            resource.release_date = datetime.date.today().isoformat()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
             stat = Booking.objects.get(resource_id=my_id)
             stat.current_status = 0
+            stat.release_date = datetime.date.today().isoformat()
             stat.save()
-            # return redirect('listview')
-            # Booking.ojbects.models.current_status = False
-            return HttpResponse("released resource")
+            return redirect('booking-view')
+
         else:
             messages.error(request, 'Resource is already available.')
-            # return redirect('land-company')
-            return HttpResponse("not released")
+            return redirect('booking-view')
     else:
         return HttpResponse("Method is not POST.")
 
@@ -322,6 +324,7 @@ class BookingView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'base_app/my_bookings.html'
     context_object_name = 'resources'
+    ordering=['-current_status']
 
     def get_queryset(self):
         qs = super().get_queryset().filter(booked_by=self.request.user)
@@ -338,7 +341,7 @@ class DownloadBookings(LoginRequiredMixin, ListView):
     template_name = 'base_app/main.html'
     context_object_name = 'resources'
 
-    def post(self, request, **kwargs):
+    def post(self):
         qs = self.get_queryset().filter(booked_by=self.request.user)
         dataset = BookingResource().export(qs)
         ds = dataset.xls
@@ -347,6 +350,22 @@ class DownloadBookings(LoginRequiredMixin, ListView):
         response['Content-Disposition'] = f"attachment; filename=posts.xls"
         return response
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.request.user.username
+        context['usr_type'] = self.request.user.usr_type
+        return context
+    
+
+class MyResources(LoginRequiredMixin, ListView):
+    model = Resource
+    template_name='base_app/my_list.html'
+    context_object_name = 'resources'
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(created_by=self.request.user)
+        return qs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['username'] = self.request.user.username

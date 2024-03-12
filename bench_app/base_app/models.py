@@ -80,7 +80,7 @@ class Resource(models.Model):
     resource_type = models.ForeignKey(Resource_info, on_delete=models.CASCADE)  
     created_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE, null=True)
     booking_status = models.BooleanField(default=True)
-    available_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
+    available_date = models.DateField(auto_now_add=False, auto_now=False, blank=False, null=True, default=date.today().isoformat())
     # booking_date = models.DateField()
 
     def __str__(self):
@@ -95,12 +95,23 @@ class Resource(models.Model):
 #     resource = models.ForeignKey(Resource, blank=True, on_delete=models.CASCADE)
 
 class Booking(models.Model):
+
+    BOOKED = 'booked'
+    RELEASED = 'released'
+    
+    STATUS_CHOICES = [
+        (1, BOOKED),
+        (0, RELEASED),
+    ]
+
     resource = models.ForeignKey(Resource, on_delete=models.CASCADE)  # Resource being booked
     booked_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)  # User who booked the resource
+    res_type = models.CharField(max_length=255, blank=True)
     available_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     booking_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
-    current_status = models.BooleanField(default=True)  # Assuming a string representation of the status
-    release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
+    current_status = models.BooleanField(choices=STATUS_CHOICES, default=True)  # Assuming a string representation of the status
+    owner = models.CharField(max_length=255, blank=True)
+    release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=False)
 
     def __str__(self):
         return f"Booking ID: {self.id} - Resource: {self.resource.resource_name} - Booked by: {self.booked_by.username}"

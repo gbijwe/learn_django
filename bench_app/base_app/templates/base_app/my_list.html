@@ -1,69 +1,42 @@
 {% extends 'base_app/home.html' %}
 {% block content %}
 <div class="container-fluid mx-1">
-  <h1>List of Resources</h1>
+  <h1>My resources</h1>
   <div class="container-fluid d-flex my-4 justify-content-between">
-    {% if usr_type == "Company" %}
     <a class="btn btn-outline-primary" href="{% url 'land-company' %}">Back to Dashboard</a>
     <a class="btn btn-primary" href="{% url 'create-resource' %}">Add your resources</a>
-  {% else %}
-    <a class="btn btn-outline-danger" href="{% url 'land-admin' %}">Back to Dashboard</a>
-    <a class="btn btn-outline-danger" href="{% url 'create-resource-type' %}">Create new resource type</a>
-  {% endif %}
   </div>
   <table class="table table-striped p-3">
     <thead class="thead-dark">
       <tr>
-        {% if usr_type == "Company" %}
           <th scope="col">Resource Name</th>
           <th scope="col">Description</th>
           <th scope="col">Resource Type</th>
-          <th scope="col">Creator</th>
           <th scope="col">Status</th>
           <th scope="col">Available From</th>
-        {% else %}
-          <th scope="col">Resource Type</th>
-          <th scope="col">Count</th>
-          {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% if usr_type == "Company" %}
         {% for resource in resources %}
         <tr>
           <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
           <td>{{ resource.description }}</td>
           <td>{{ resource.resource_type }}</td>
-          <td>{{ resource.created_by }}</td>
           {% if resource.booking_status == True %}
             <td style="color: green;">Available</td>
           {% else %}
             <td style="color: red;">Booked</td>
           {% endif %}
-          <td>{{ resource.available_date }}</td>
+            <td>{{ resource.available_date }}</td>
         </tr>
         {% endfor %}
-      {% else %}
-        {% for resource in resources %}
-          <tr>
-            <td><a href="{% url 'admindetailview' resource.id %}">{{ resource.resource_type_name }}</a></td>
-            <td>{{ count_of }}</td>
-          </tr>
-        {% endfor %}  
-      {% endif %}
     </tbody>
-    
   </table>
   
 
   <div class="container-fluid d-flex my-4 justify-content-between">
-    {% if usr_type == "Company" %}
     <a class="btn btn-outline-primary" href="{% url 'land-company' %}">Back to Dashboard</a>
     <a class="btn btn-primary" href="{% url 'create-resource' %}">Add your resources</a>
-  {% else %}
-    <a class="btn btn-outline-danger" href="{% url 'land-admin' %}">Back to Dashboard</a>
-    <a class="btn btn-outline-danger" href="{% url 'create-resource-type' %}">Create new resource type</a>
-  {% endif %}
   </div>
 </div>
 {% endblock %}
