@@ -25,7 +25,14 @@
             </table>
             <div class="container-fluid d-flex my-4 justify-content-between">
                   <a class="btn btn-outline-primary" href="{% url 'listview' %}">Back to List view.</a>
-                  <a class="btn btn-outline-success" href="{% url 'updateview' object.pk %}">Update</a>
+                  <a class="btn btn-outline-dark" href="{% url 'updateview' object.pk %}">Update</a>
+                  {% if object.booking_status == True %}
+                  <form action="{% url 'bookresource' object.id %}" method="post" >
+                        {% csrf_token %}
+                        <input type="hidden" name="resource_id" value="{{ object.id }}">
+                        <button type="submit" class="btn btn-success">Book for me</button>
+                  </form>
+                  {% endif %}
                   <a class="btn btn-danger" href="{% url 'deleteview' object.pk %}">Delete resource</a>
             </div>
       {% else %}

@@ -298,6 +298,7 @@ def release_resource(request, my_id):
         resource = Resource.objects.get(id=my_id)
         print(resource.booking_status)
         print(resource)
+        print(resource.id)
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
