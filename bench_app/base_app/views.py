@@ -131,7 +131,6 @@ class MyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         'resource_name', 'resource_type', 'description'
     ]
 
-
     def test_func(self):
         curr_resource = self.get_object()
         if self.request.user == curr_resource.created_by:
@@ -337,12 +336,7 @@ class BookingView(LoginRequiredMixin, ListView):
         context['usr_type'] = self.request.user.usr_type
         return context
 
-class DownloadBookings(LoginRequiredMixin, ListView):
-    model = Booking
-    template_name = 'base_app/main.html'
-    context_object_name = 'resources'
-
-    def post(self):
+    def post(self, request):
         qs = self.get_queryset().filter(booked_by=self.request.user)
         dataset = BookingResource().export(qs)
         ds = dataset.xls
@@ -350,13 +344,6 @@ class DownloadBookings(LoginRequiredMixin, ListView):
         response = HttpResponse(ds, content_type='xls')
         response['Content-Disposition'] = f"attachment; filename=posts.xls"
         return response
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['username'] = self.request.user.username
-        context['usr_type'] = self.request.user.usr_type
-        return context
-    
 
 class MyResources(LoginRequiredMixin, ListView):
     model = Resource
