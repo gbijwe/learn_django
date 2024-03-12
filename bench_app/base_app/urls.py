@@ -25,6 +25,7 @@ urlpatterns = [
     path('book-resource/<int:resource_id>/', views.book_resource, name='bookresource'),
     path('release-resource/<int:my_id>/', views.release_resource, name='releaseresource'),
     path('land-company/profile/', views.BookingView.as_view(), name="booking-view"),
+    # path('land-company/testing/', views.BookingListView.as_view(), name="testing"),
 
 
     # Admin 

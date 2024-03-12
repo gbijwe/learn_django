@@ -58,8 +58,6 @@ class CustomUsers(AbstractBaseUser):
 class Resource_info(models.Model):
 
     resource_type_name = models.CharField(max_length=255, blank=False, unique=True)  # Enforce unique resource type names
-    # total_number = models.IntegerField(default=0)
-
     def __str__(self):
         return self.resource_type_name
     
@@ -89,10 +87,6 @@ class Resource(models.Model):
     def get_absolute_url(self):
         return reverse('detailview', kwargs={'pk': self.pk})
 
-# class Booking(models.Model):
-#     # companies = CustomUsers.objects.filter(usr_type="Company")
-#     booked_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)
-#     resource = models.ForeignKey(Resource, blank=True, on_delete=models.CASCADE)
 
 class Booking(models.Model):
 
@@ -103,15 +97,15 @@ class Booking(models.Model):
         (1, BOOKED),
         (0, RELEASED),
     ]
-
     resource = models.ForeignKey(Resource, on_delete=models.CASCADE)  # Resource being booked
     booked_by = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)  # User who booked the resource
     res_type = models.CharField(max_length=255, blank=True)
     available_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     booking_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     current_status = models.BooleanField(choices=STATUS_CHOICES, default=True)  # Assuming a string representation of the status
-    owner = models.CharField(max_length=255, blank=True)
-    release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=False)
+    # owner = models.CharField(max_length=255, blank=True)
+    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='bookings')
+    release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
 
     def __str__(self):
         return f"Booking ID: {self.id} - Resource: {self.resource.resource_name} - Booked by: {self.booked_by.username}"

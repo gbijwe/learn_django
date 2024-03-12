@@ -269,6 +269,7 @@ def book_resource(request, resource_id):
       booking = Booking.objects.create(
           resource=resource,
         #   res_id = resource.id,
+          res_type = str(resource.resource_type),
           booked_by=request.user,  # Access the logged-in user
           available_date=resource.available_date,  # Replace with your logic to get available date
           booking_date=booking_date,  # Today's date
@@ -359,3 +360,16 @@ class MyResources(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         context['usr_type'] = self.request.user.usr_type
         return context
+    
+# sample 
+    
+# class BookingListView(LoginRequiredMixin, ListView):
+#     model = Booking
+#     template_name = 'another_list.html'  # Your template name
+
+#     def get_queryset(self):
+#         # Assuming 'owner_id' is passed as a parameter in the URL
+#         owner = self.request.user
+#         # Filter bookings based on the owner_id
+#         queryset = Booking.owner.bookings.all()
+#         return queryset
