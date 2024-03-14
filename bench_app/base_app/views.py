@@ -274,7 +274,8 @@ def book_resource(request, resource_id):
           available_date=resource.available_date,  # Replace with your logic to get available date
           booking_date=booking_date,  # Today's date
           current_status=1,
-          owner = str(resource.created_by),  
+        #   owner = str(resource.created_by),
+          owner = resource.created_by.get_username(),  
       )
       print(resource.created_by)
       booking.save()
@@ -296,6 +297,7 @@ def book_resource(request, resource_id):
 def release_resource(request, my_id):
     if request.method == 'POST':
         resource = Resource.objects.get(id=my_id)
+        
         print(resource.booking_status)
         print(resource)
         print(resource.id)
@@ -305,7 +307,7 @@ def release_resource(request, my_id):
             resource.release_date = datetime.date.today().isoformat()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
-            stat = Booking.objects.get(resource_id=my_id)
+            stat = Booking.objects.filter(resource_id=my_id).latest('booking_date')
             stat.current_status = 0
             stat.release_date = datetime.date.today().isoformat()
             stat.save()
@@ -361,7 +363,7 @@ class MyResources(LoginRequiredMixin, ListView):
         context['usr_type'] = self.request.user.usr_type
         return context
     
-# sample 
+# sample to see how related_name works
     
 # class BookingListView(LoginRequiredMixin, ListView):
 #     model = Booking

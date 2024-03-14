@@ -23,6 +23,12 @@ class BookingResource(resources.ModelResource):
         attribute='get_current_status_display'  # Use the 'get_FIELD_display' method for BooleanField
     )
 
+    # owner = fields.Field(
+    #     column_name='owner',
+    #     attribute='owner',
+    #     widget=ForeignKeyWidget(CustomUsers, field='username')
+    # )
+
     class Meta: 
         model = Booking
         fields = ('id', 'resource', 'res_type', 'owner', 'booking_date', 'release_date', 'current_status')
