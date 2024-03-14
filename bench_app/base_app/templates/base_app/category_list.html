@@ -1,0 +1,22 @@
+{% extends 'base_app/home.html' %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">
+        See all categories
+    </h2>
+    <div class="card-columns" style="max-width: 95%;">
+        {% for resource in resources %}
+        {% ifchanged %}
+        <a href="{% url 'categoryview' resource.resource_type_id %}">
+            
+            <div class="card text-white text-uppercase font-weight-bold  text-align-center" style="background-color: cornflowerblue;">
+                <div class="card-body d-flex justify-content-between">
+                    <p class="card-title text-white">{{ resource.resource_type }}</p>                  
+                </div>
+            </div>
+        </a>
+        {% endifchanged %}
+        {% endfor %}
+</div>
+</div>
+{% endblock content %}

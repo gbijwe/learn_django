@@ -42,6 +42,17 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'base_app/register.html', {'form': form})
 
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Resource
+    template_name = 'base_app/category_list.html'
+    context_object_name = 'resources'
+    ordering = ['resource_type']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        context['username'] = self.request.user.username
+        return context
 # Determine which user goes to which page on login. Admin & company.
 class MyLoginView(LoginView):
     redirect_authenticated_user = True
@@ -297,17 +308,13 @@ def book_resource(request, resource_id):
 def release_resource(request, my_id):
     if request.method == 'POST':
         resource = Resource.objects.get(id=my_id)
-        
-        print(resource.booking_status)
-        print(resource)
-        print(resource.id)
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
             resource.release_date = datetime.date.today().isoformat()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
-            stat = Booking.objects.filter(resource_id=my_id).latest('booking_date')
+            stat = Booking.objects.filter(resource_id=my_id).first()
             stat.current_status = 0
             stat.release_date = datetime.date.today().isoformat()
             stat.save()

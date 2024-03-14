@@ -1,5 +1,5 @@
 {% extends "layouts/base-fullscreen.html" %}
-
+{% load crispy_forms_tags %}
 {% block title %} Login {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
@@ -27,7 +27,9 @@
 
                     {% csrf_token %} 
 
-                        <div class="input-group mb-3 border-0"><span class="input-group-text">
+                        <!-- {{ form|crispy }} -->
+
+                        <div class="input-group mb-3"><span class="input-group-text">
                             <svg class="icon">
                               <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-user"></use>
                             </svg></span>
@@ -43,13 +45,14 @@
                           <div class="col-6">
                             <button class="btn btn-primary px-4" type="submit" name="login">Login</button>
                           </div>
+
                         </div>
 
                   </form> 
 
                 </div>
               </div>
-              <div class="card col-md-5 text-white bg-primary py-5">
+              <div class="card col-md-5 text-white bg-dark py-5">
                 <div class="card-body text-center">
                   <div>
                     <p>
@@ -65,8 +68,8 @@
 
                     <br />
                     <p>
-                       CORECO Bench App <br>
-                      - coded by <a class="text-white" target="_blank" href="https://www.gauravbijwe.co">Gaurav Bijwe</a>.
+                       CORECO Bench App<br>
+                      - coded by <a class="text-white" target="_blank" href="https://gauravbijwe.co">Gaurav Bijwe</a>.
                     </p>
         
                   </div>
