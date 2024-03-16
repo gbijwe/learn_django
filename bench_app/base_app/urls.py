@@ -5,8 +5,8 @@ from . import views
 
 urlpatterns = [
     path("", views.landing_page, name="landing"),
-    path("land-company/", views.CompanyHome.as_view(), name="land-company"),
-    path("land-admin/", views.AdminHome.as_view(), name="land-admin"),
+    path("land-company/", views.statistics_view, name="land-company"),
+    path("land-admin/", views.statistics_view, name="land-admin"),
 
     # Auth
     path("register/", views.register, name="register"),
@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Company
     path("land-company/listview/", views.MyListView.as_view(), name="listview"),
+    path("land-company/categoryview/", views.CategoryListView.as_view(), name="categoryview"),
     path("land-company/myresources", views.MyResources.as_view(), name="my-resources"),
     path("land-company/<int:category>/", views.MyCategoryView.as_view(), name="categoryview"),
     path("land-company/listview/new", views.MyCreateView.as_view(), name="create-resource"),

@@ -103,9 +103,10 @@ class Booking(models.Model):
     available_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     booking_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True, default=date.today().isoformat())
     current_status = models.BooleanField(choices=STATUS_CHOICES, default=True)  # Assuming a string representation of the status
-    # owner = models.CharField(max_length=255, blank=True)
-    owner = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='bookings')
+    owner = models.CharField(max_length=255, blank=True)
+    # owner = models.ForeignKey(Resource, on_delete=models.CASCADE, related_name='bookings')
     release_date = models.DateField(auto_now_add=False, auto_now=False, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f"Booking ID: {self.id} - Resource: {self.resource.resource_name} - Booked by: {self.booked_by.username}"

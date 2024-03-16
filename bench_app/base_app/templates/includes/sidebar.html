@@ -1,0 +1,46 @@
+<div class="sidebar sidebar-dark sidebar-fixed bg-dark pt-1 " id="sidebar">
+  <div class="sidebar-brand d-none d-md-flex">
+    <h3>Bench App</h3>
+  </div>
+  <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}">
+        <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-speedometer"></use>
+        </svg> Dashboard</a></li>
+    <li class="nav-title text-white">All Links</li>
+    {% if usr_type == "Company" %}
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'categoryview' %}">
+        <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-grid"></use>
+        </svg> Categories</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'create-resource' %}">
+        <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-pencil"></use>
+        </svg> Create Resource</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'my-resources' %}">
+        <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-list"></use>
+        </svg> My Resources </a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'booking-view' %}">
+        <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-book"></use>
+        </svg> My Bookings </a></li>      
+
+        
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'listview' %}">
+          <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-book"></use>
+          </svg> All resources </a></li>  
+
+          {% else %}   
+        <li class="nav-item"><a class="nav-link text-white" href="{% url 'create-resource-type' %}">
+            <svg class="nav-icon">
+              <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-pencil"></use>
+            </svg> Create Resource Type </a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="{% url 'adminlistview' %}">
+          <svg class="nav-icon">
+          <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-book"></use>
+          </svg> All resources </a></li>   
+        {% endif %}
+  </ul>
+</div>

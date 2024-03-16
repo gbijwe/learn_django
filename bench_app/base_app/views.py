@@ -15,12 +15,11 @@ from django.views.generic import (
     DeleteView,
     )
 
-from .models import Resource, Resource_info, Booking
+from .models import Resource, Resource_info, Booking, CustomUsers
 import datetime
 from django.contrib.auth.decorators import login_required
 from .admin import BookingResource
-# from django.views.decorators.csrf import csrf_exempt
-# from django.utils.decorators import method_decorator 
+from django.db.models import Count, Sum
 
 
 def landing_page(request):
@@ -42,6 +41,17 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'base_app/register.html', {'form': form})
 
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Resource
+    template_name = 'base_app/category_list.html'
+    context_object_name = 'resources'
+    ordering = ['resource_type']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['usr_type'] = self.request.user.usr_type
+        context['username'] = self.request.user.username
+        return context
 # Determine which user goes to which page on login. Admin & company.
 class MyLoginView(LoginView):
     redirect_authenticated_user = True
@@ -86,19 +96,30 @@ class CompanyHome(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         return context
 
-class MyListView(ListView):
+class MyListView(LoginRequiredMixin, ListView):
     model = Resource
     template_name = 'base_app/resource_list.html'
     context_object_name = 'resources'
     ordering = ['resource_type']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Add a flag 'is_available' to each resource
+        for resource in queryset:
+            resource.is_available = resource.available_date <= datetime.date.today()
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
+
         return context
 
-class MyDetailView(DetailView):
+
+class MyDetailView(LoginRequiredMixin, DetailView):
     model = Resource
     template_name="base_app/resource_detail.html"
 
@@ -106,7 +127,15 @@ class MyDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
+
+        resource = self.get_object()
+        # Check if the logged-in user is the creator of the resource
+        if self.request.user == resource.created_by:
+            context['is_creator'] = True
+        else:
+            context['is_creator'] = False
         return context
+    
 
 class MyCreateView(LoginRequiredMixin, CreateView):
     model = Resource
@@ -128,7 +157,7 @@ class MyCreateView(LoginRequiredMixin, CreateView):
 class MyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Resource
     fields = [
-        'resource_name', 'resource_type', 'description'
+         'resource_name', 'resource_type', 'description', 'available_date'
     ]
 
     def test_func(self):
@@ -256,6 +285,7 @@ class MyCategoryView(LoginRequiredMixin, ListView):
         context['status'] = Resource.objects.get(id=category).booking_status
         context['count_of'] = count_of
         context['username'] = self.request.user.username
+        context['usr_type'] = self.request.user.usr_type
         return context
 
 
@@ -274,7 +304,8 @@ def book_resource(request, resource_id):
           available_date=resource.available_date,  # Replace with your logic to get available date
           booking_date=booking_date,  # Today's date
           current_status=1,
-          owner = str(resource.created_by),  
+        #   owner = str(resource.created_by),
+          owner = resource.created_by.get_username(),  
       )
       print(resource.created_by)
       booking.save()
@@ -296,18 +327,18 @@ def book_resource(request, resource_id):
 def release_resource(request, my_id):
     if request.method == 'POST':
         resource = Resource.objects.get(id=my_id)
-        print(resource.booking_status)
-        print(resource)
-        print(resource.id)
+        stat = Booking.objects.filter(resource_id=my_id).order_by('-created_at').first()
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
-            resource.release_date = datetime.date.today().isoformat()  # Setting release date as today's date
+            resource.release_date = datetime.date.today().isoformat()
+            resource.available_date = datetime.date.today().isoformat()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
-            stat = Booking.objects.get(resource_id=my_id)
+            
             stat.current_status = 0
             stat.release_date = datetime.date.today().isoformat()
+            stat.available_date = datetime.date.today().isoformat()
             stat.save()
             return redirect('booking-view')
 
@@ -360,16 +391,25 @@ class MyResources(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         context['usr_type'] = self.request.user.usr_type
         return context
-    
-# sample 
-    
-# class BookingListView(LoginRequiredMixin, ListView):
-#     model = Booking
-#     template_name = 'another_list.html'  # Your template name
 
-#     def get_queryset(self):
-#         # Assuming 'owner_id' is passed as a parameter in the URL
-#         owner = self.request.user
-#         # Filter bookings based on the owner_id
-#         queryset = Booking.owner.bookings.all()
-#         return queryset
+@login_required
+def statistics_view(request):
+    current_user = request.user
+
+    total_resources = Resource.objects.count
+    my_total_resources = Resource.objects.filter(created_by=current_user).count
+    booked_till_date = Booking.objects.filter(booked_by=current_user).count
+    current_booked = Booking.objects.filter(booked_by=current_user, current_status=True).count
+    total_users = CustomUsers.objects.filter(usr_type="Company").count
+
+    context = {
+        'my_total_resources' : my_total_resources,
+        'total_resources' : total_resources,
+        'booked_till_date' : booked_till_date, 
+        'current_booked' : current_booked,
+        'usr_type' : current_user.usr_type,
+        'username' : current_user.username,
+        'total_users': total_users,
+    }
+
+    return render(request, 'base_app/home.html', context)
