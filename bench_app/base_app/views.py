@@ -15,13 +15,11 @@ from django.views.generic import (
     DeleteView,
     )
 
-from .models import Resource, Resource_info, Booking
+from .models import Resource, Resource_info, Booking, CustomUsers
 import datetime
-from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .admin import BookingResource
-# from django.views.decorators.csrf import csrf_exempt
-# from django.utils.decorators import method_decorator 
+from django.db.models import Count, Sum
 
 
 def landing_page(request):
@@ -393,16 +391,25 @@ class MyResources(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         context['usr_type'] = self.request.user.usr_type
         return context
-    
-# sample to see how related_name works
-    
-# class BookingListView(LoginRequiredMixin, ListView):
-#     model = Booking
-#     template_name = 'another_list.html'  # Your template name
 
-#     def get_queryset(self):
-#         # Assuming 'owner_id' is passed as a parameter in the URL
-#         owner = self.request.user
-#         # Filter bookings based on the owner_id
-#         queryset = Booking.owner.bookings.all()
-#         return queryset
+@login_required
+def statistics_view(request):
+    current_user = request.user
+
+    total_resources = Resource.objects.count
+    my_total_resources = Resource.objects.filter(created_by=current_user).count
+    booked_till_date = Booking.objects.filter(booked_by=current_user).count
+    current_booked = Booking.objects.filter(booked_by=current_user, current_status=True).count
+    total_users = CustomUsers.objects.filter(usr_type="Company").count
+
+    context = {
+        'my_total_resources' : my_total_resources,
+        'total_resources' : total_resources,
+        'booked_till_date' : booked_till_date, 
+        'current_booked' : current_booked,
+        'usr_type' : current_user.usr_type,
+        'username' : current_user.username,
+        'total_users': total_users,
+    }
+
+    return render(request, 'base_app/home.html', context)

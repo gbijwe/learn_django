@@ -5,8 +5,8 @@ from . import views
 
 urlpatterns = [
     path("", views.landing_page, name="landing"),
-    path("land-company/", views.CompanyHome.as_view(), name="land-company"),
-    path("land-admin/", views.AdminHome.as_view(), name="land-admin"),
+    path("land-company/", views.statistics_view, name="land-company"),
+    path("land-admin/", views.statistics_view, name="land-admin"),
 
     # Auth
     path("register/", views.register, name="register"),
