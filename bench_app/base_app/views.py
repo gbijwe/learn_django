@@ -17,6 +17,7 @@ from django.views.generic import (
 
 from .models import Resource, Resource_info, Booking
 import datetime
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .admin import BookingResource
 # from django.views.decorators.csrf import csrf_exempt
@@ -97,19 +98,30 @@ class CompanyHome(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         return context
 
-class MyListView(ListView):
+class MyListView(LoginRequiredMixin, ListView):
     model = Resource
     template_name = 'base_app/resource_list.html'
     context_object_name = 'resources'
     ordering = ['resource_type']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Add a flag 'is_available' to each resource
+        for resource in queryset:
+            resource.is_available = resource.available_date <= datetime.date.today()
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
+
         return context
 
-class MyDetailView(DetailView):
+
+class MyDetailView(LoginRequiredMixin, DetailView):
     model = Resource
     template_name="base_app/resource_detail.html"
 
@@ -117,7 +129,15 @@ class MyDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
+
+        resource = self.get_object()
+        # Check if the logged-in user is the creator of the resource
+        if self.request.user == resource.created_by:
+            context['is_creator'] = True
+        else:
+            context['is_creator'] = False
         return context
+    
 
 class MyCreateView(LoginRequiredMixin, CreateView):
     model = Resource
@@ -139,7 +159,7 @@ class MyCreateView(LoginRequiredMixin, CreateView):
 class MyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Resource
     fields = [
-        'resource_name', 'resource_type', 'description'
+         'resource_name', 'resource_type', 'description', 'available_date'
     ]
 
     def test_func(self):
@@ -267,6 +287,7 @@ class MyCategoryView(LoginRequiredMixin, ListView):
         context['status'] = Resource.objects.get(id=category).booking_status
         context['count_of'] = count_of
         context['username'] = self.request.user.username
+        context['usr_type'] = self.request.user.usr_type
         return context
 
 
@@ -308,15 +329,18 @@ def book_resource(request, resource_id):
 def release_resource(request, my_id):
     if request.method == 'POST':
         resource = Resource.objects.get(id=my_id)
+        stat = Booking.objects.filter(resource_id=my_id).order_by('-created_at').first()
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
-            resource.release_date = datetime.date.today().isoformat()  # Setting release date as today's date
+            resource.release_date = datetime.date.today().isoformat()
+            resource.available_date = datetime.date.today().isoformat()  # Setting release date as today's date
             resource.save()
             messages.success(request, 'Resource released successfully!')
-            stat = Booking.objects.filter(resource_id=my_id).first()
+            
             stat.current_status = 0
             stat.release_date = datetime.date.today().isoformat()
+            stat.available_date = datetime.date.today().isoformat()
             stat.save()
             return redirect('booking-view')
 
