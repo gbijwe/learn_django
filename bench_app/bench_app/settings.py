@@ -26,9 +26,9 @@ SECRET_KEY = "django-insecure-+rzlb%%)#5_84oq0ff1^c$ygfzru7qmq=9krs*3%^ny3z4)^i&
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ac3d-2405-201-1003-d1dd-8d3c-4233-ef8f-dd04.ngrok-free.app',
     '127.0.0.1',
     'localhost',
+    '8237-2405-201-1003-d1dd-4965-66d7-2efb-fdf.ngrok-free.app',
 ]
 
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'import_export',
+    'corsheaders',
 ]
 
 
@@ -52,7 +53,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -150,8 +152,13 @@ AUTH_USER_MODEL = "base_app.CustomUsers"
 # LOGIN_REDIRECT_URL = "land-company"
 LOGIN_URL = 'login'
 
-NGROK_DOMAIN = "ac3d-2405-201-1003-d1dd-8d3c-4233-ef8f-dd04.ngrok-free.app"
 
-CSRF_TRUSTED_ORIGIN = [
-    NGROK_DOMAIN,
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app','https://*.127.0.0.1']
+
+CORS_ALLOWED_ORIGINS = [
+    "https://8237-2405-201-1003-d1dd-4965-66d7-2efb-fdf.ngrok-free.app",
+    "http://localhost:8090",
+    "http://127.0.0.1:9000"
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True

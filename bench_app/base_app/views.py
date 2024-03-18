@@ -224,7 +224,7 @@ class AdminCreateTypeView(AdminUserMixin, CreateView):
         context['username'] = self.request.user.username
         return context
 
-class AdminDetailView(DetailView):
+class AdminDetailView(AdminUserMixin, DetailView):
     model = Resource_info
     template_name="base_app/resource_detail.html"
 
