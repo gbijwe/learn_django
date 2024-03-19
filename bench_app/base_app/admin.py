@@ -29,8 +29,8 @@ class BookingResource(resources.ModelResource):
     
     class Meta: 
         model = Booking
-        fields = ('resource', 'res_type', 'description', 'owner', 'booking_date', 'release_date', 'current_status')
-        export_order = ('resource', 'res_type', 'description', 'booking_date', 'current_status', 'release_date', 'owner')
+        fields = ('resource', 'resource_type', 'description', 'owner', 'booking_date', 'release_date', 'current_status')
+        export_order = ('resource', 'resource_type', 'description', 'booking_date', 'current_status', 'release_date', 'owner')
 
 admin.site.register(CustomUsers)
 admin.site.register(Booking)

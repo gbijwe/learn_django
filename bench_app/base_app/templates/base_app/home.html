@@ -16,7 +16,11 @@
             <li class="nav-item dropdown my-2 ml-3">
             </li>
             <li class="nav-item dropdown my-2 ml-3">
+              {% if usr_type == "Company" %}
               <a href="{% url 'booking-view' %}" class="navbar-brand text-light my-0">{{ username }}</a>
+              {% else %}
+              <a href="{% url 'land-admin' %}" class="navbar-brand text-light my-0">{{ username }}</a>
+              {% endif %}
             </li>
             <li class="nav-item dropdown my-2 ml-3">
               <form method="post" action="{% url 'logout' %}">
@@ -31,25 +35,78 @@
     </header>
     {% block content %}
 
-      <div class="container-fluid mx-3 ">
+      <div class="container-fluid">
         <h3 class="text-muted"><i>Hello</i>, {{ username }}</h3>
         <h5 class="text-muted">Welcome to the bench dashboard!</h5>
 
         <h1 class="font-weight-bold">Overview</h1>
-        {% if usr_type == "Company" %}
-        <h5 class="text-dark mt-4">My resources: {{ my_total_resources }}</h5>
-        <h5 class="text-dark mt-4">Total resources booked to date: {{ booked_till_date }}</h5>
-        <h5 class="text-dark mt-4">Total resources booked currently: {{ current_booked }}</h5>
-        <h5 class="text-muted mt-4">Total Resources on system: {{ total_resources }}</h5>
+        <hr style="color: #f22e52">
+        <h4 style="font-weight: 600;">My Resources</h4>
+
+
+        <div class="card-deck my-4">
+          <div class="card border-primary">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{ my_total_resources }}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">My Resources</p>
+            </div>
+          </div>
+          <div class="card border-primary">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{my_total_resources_booked}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">My resources booked</p
+                  >
+            </div>
+          </div>
+          </div>
+
+
+          <h4 style="font-weight: 600;">My Bookings</h4>
+          <div class="card-deck my-4">
+          <div class="card border-primary">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{booked_till_date}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">Bookings to date</p>
+            </div>
+          </div>
+          <div class="card border-success">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{current_booked}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">My current bookings</p>
+            </div>
+          </div>
+          </div>
+
+          <h4 style="font-weight: 600;">Total Resources</h4>
+          <div class="card-deck my-4">
+          <div class="card border-success">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{available_resources}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">Available resources</p>
+            </div>
+          </div>
+          <div class="card border-primary">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{total_resource_types}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">Resource Types</p>
+            </div>
+          </div>
+          <div class="card border-primary">
+            <div class="card-body">
+              <h2 class="card-title text-center">{{total_resources}}</h2>
+              <hr class="px-3 text-danger">
+              <p class="card-text text-center text-uppercase">Total resources</p>
+            </div>
+          </div>
+        </div>
       </div>
-      {% else %}
-      
-      <h5 class="text-dark mt-4">Total Companies on system: {{ total_users }}</h5>
-      <h5 class="text-muted mt-4">Total Resources on system: {{ total_resources }}</h5>
-        {% endif %}
-      <div class="container-fluid mx-3">
-       
-      </div>
+    
     {% endblock content %}
     </div>
     

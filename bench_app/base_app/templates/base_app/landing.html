@@ -8,22 +8,165 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <title>CORECO Bench App</title>
-    </head>
-    <body>
-        <div class="container-fluid">
-            <div class="d-flex justify-content-md-center text-center">
-                <!-- <div class="col">hi</div> -->
-                <div class="col-10 align-items-center m-2">
-                    <h3>Welcome to the bench app.</h3>
-                    <a class="btn btn-success m-1 " href="{% url 'register' %}" role="button">Sign Up</a>
-                    <a class="btn btn-outline-success m-1" href="{% url 'login' %}" role="button">Login</a>
-                    <br>
-                </div>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains Mono:wght@700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@1,400&display=swap"
+    />
 
+    <style>
+      body {
+        margin: 0;
+        line-height: normal;
+        width: 100%;
+      }
+    </style>
+
+
+    <title>CORECO BenchPool</title>
+    </head>
+    <body style="width: 100%;">
+        <div>             
+            <div
+              style="
+                width: 100%;
+                position: relative;
+                background-color: #160647;
+                height: 60rem;
+                overflow: hidden;
+                text-align: left;
+                font-size: 1.5rem;
+                color: #fff;
+                font-family: Inter;
+              "
+            >
+              <img
+                style="
+                  position: relative;
+                  top: 0;
+                  left: 52.688rem;
+                  width: auto;
+                  height: auto;
+                  object-fit: fill;
+                "
+                alt=""
+                src="https://files.catbox.moe/5nekka.png"
+              />
+
+              <div
+                style="
+                  position: absolute;
+                  top: 10.75rem;
+                  left: 81.25rem;
+                  background-color: rgba(0, 0, 0, 0.5);
+                  filter: blur(500px);
+                  width: 17.688rem;
+                  height: 49.563rem;
+                "
+              ></div>
+              <img
+                style="
+                  position: absolute;
+                  top: 17.75rem;
+                  left: 40.688rem;
+                  width: 60rem;
+                  height: auto;
+                  object-fit: fill;
+                "
+                alt=""
+                
+                src="https://files.catbox.moe/8i8l9j.png"
+              />
+
+              <b
+                style="
+                  position: absolute;
+                  top: 36.188rem;
+                  left: 4.625rem;
+                  font-size: 3rem;
+                  display: inline-block;
+                  width: 32.938rem;
+                "
+              >
+                <p style="margin: 0">Pooling Talent,</p>
+                <p style="margin: 0">Sharing Success!</p>
+              </b>
+              <b
+                style="
+                  position: absolute;
+                  top: 10.125rem;
+                  left: 4.625rem;
+                  font-size: 8rem;
+                  font-family: 'JetBrains Mono';
+                "
+                >BenchPool</b
+              >
+              <div
+                style="
+                  position: absolute;
+                  top: 45.938rem;
+                  left: 4.625rem;
+                  background-color: #47beba;
+                  width: 12.563rem;
+                  height: 4.063rem;
+                "
+              ></div>
+              <div
+                style="
+                  position: absolute;
+                  top: 45.938rem;
+                  left: 18.625rem;
+                  background-color: #f22e52;
+                  width: 12.563rem;
+                  height: 4.063rem;
+                "
+              ></div>
+              <a
+                style="
+                  position: absolute;
+                  top: 47.063rem;
+                  left: 8.563rem;
+                  text-align: center;
+                  color: white;
+                " 
+
+                href="{% url 'login' %}"
+                >LOGIN</a
+              >
+              <a
+                style="
+                  position: absolute;
+                  top: 47.063rem;
+                  left: 21.625rem;
+                  text-align: center;
+                  color: white;
+                " 
+
+                href="{% url 'register' %}"
+                >SIGN UP!</a
+              >
+              <i
+                style="
+                  position: absolute;
+                  top: 19.5rem;
+                  left: 4.625rem;
+                  display: inline-block;
+                  font-family: Arimo;
+                  width: 40.563rem;
+                  height: 2.375rem;
+                "
+                >Where resources meet opportunity!</i
+              >
             </div>
-            
         </div>
+      </div>
         
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

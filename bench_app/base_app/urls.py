@@ -6,12 +6,13 @@ from . import views
 urlpatterns = [
     path("", views.landing_page, name="landing"),
     path("land-company/", views.statistics_view, name="land-company"),
-    path("land-admin/", views.statistics_view, name="land-admin"),
+    # path("land-admin/", views.statistics_view, name="land-admin"),
+    path("land-admin/", views.CompanyDataSet.as_view(), name="land-admin"),
 
     # Auth
     path("register/", views.register, name="register"),
     path("login/", views.MyLoginView.as_view(template_name="base_app/login.html"), name="login"),
-    path("logout/", auth_views.LogoutView.as_view(template_name="base_app/goodbye.html"), name="logout"),
+    path("logout/", auth_views.LogoutView.as_view(template_name="base_app/landing.html"), name="logout"),
 
     # Company
     path("land-company/listview/", views.MyListView.as_view(), name="listview"),

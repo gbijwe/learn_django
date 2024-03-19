@@ -22,10 +22,14 @@
           <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
           <td>{{ resource.description }}</td>
           <td>{{ resource.resource_type }}</td>
-          {% if resource.booking_status == True %}
-            <td style="color: green;">Available</td>
+          {% if resource.is_available %}
+            {% if resource.booking_status == True %}
+              <td class="text-success font-weight-bold">Available</td>
+            {% else %}
+              <td class="text-danger font-weight-bold">Booked</td>
+            {% endif %}
           {% else %}
-            <td style="color: red;">Booked</td>
+            <td class="text-muted">Unavailable</td>
           {% endif %}
             <td>{{ resource.available_date }}</td>
         </tr>

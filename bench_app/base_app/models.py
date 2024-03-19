@@ -4,12 +4,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.urls import reverse
 from datetime import datetime, date
 
-ADM = "Admin"
-CMP = "Company"
-usr_choice = (
-    (ADM, "Admin"),
-    (CMP, "Company")
-)
 
 # User creation and manager defined here.
 
@@ -39,9 +33,16 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields) 
 
+ADM = "Admin"
+CMP = "Company"
+usr_choice = (
+    ("Company", "Company"),
+    ("Admin", "Admin"),
+)
+
 class CustomUsers(AbstractBaseUser):
     username = models.CharField(max_length=255, blank=False, unique=True, null=True)
-    usr_type = models.CharField(max_length = 7, blank=False, null = True, choices=usr_choice)
+    usr_type = models.CharField(max_length = 7, blank=False, null = True, choices=usr_choice, default=usr_choice[0][0])
     password = models.CharField(max_length=255, blank=False, null=True)
     company_id = models.CharField(max_length = 255, blank=True)
 

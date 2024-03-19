@@ -45,11 +45,16 @@
                 </div>
                 <span class="text-error">{{ form.email.errors }}</span>
 
-                <div class="input-group mb-3"><span class="input-group-text">
+                <div class="input-group mb-3">
+                  <span class="input-group-text">
                     <svg class="icon">
-                    <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-list"></use>
-                    </svg></span>
-                {{ form.usr_type }}
+                      <use xlink:href="/static/assets/vendors/@coreui/icons/svg/free.svg#cil-check-circle"></use>
+                      </svg>
+                  </span>
+                  <div class="mx-2">
+                  <strong>Choose user type:</strong> 
+                      {{ form.usr_type }}
+                    </div>
                 </div>
 
                 <div class="input-group mb-3"><span class="input-group-text">

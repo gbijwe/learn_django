@@ -23,7 +23,6 @@
           <th scope="col">Available From</th>
         {% else %}
           <th scope="col">Resource Type</th>
-          <th scope="col">Count</th>
           {% endif %}
       </tr>
     </thead>
@@ -51,7 +50,6 @@
         {% for resource in resources %}
           <tr>
             <td><a href="{% url 'admindetailview' resource.id %}">{{ resource.resource_type_name }}</a></td>
-            <td>{{ count_of }}</td>
           </tr>
         {% endfor %}  
       {% endif %}

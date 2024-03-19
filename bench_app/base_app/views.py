@@ -11,20 +11,21 @@ from django.views.generic import (
     ListView,
     DetailView,
     CreateView,
-    UpdateView, 
+    UpdateView,
     DeleteView,
-    )
-
+)
 from .models import Resource, Resource_info, Booking, CustomUsers
 import datetime
 from django.contrib.auth.decorators import login_required
 from .admin import BookingResource
 from django.db.models import Count, Sum
+from django.contrib.admin.widgets import AdminDateWidget
 
 
 def landing_page(request):
     # return HttpResponse("<h3>Welcome to the Bench App.</h3>")
     return render(request, 'base_app/landing.html')
+
 
 def register(request):
     # creation of a new instance of UserCreationFOrm
@@ -41,6 +42,7 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'base_app/register.html', {'form': form})
 
+
 class CategoryListView(LoginRequiredMixin, ListView):
     model = Resource
     template_name = 'base_app/category_list.html'
@@ -52,24 +54,25 @@ class CategoryListView(LoginRequiredMixin, ListView):
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
+
 # Determine which user goes to which page on login. Admin & company.
+
+
 class MyLoginView(LoginView):
     redirect_authenticated_user = True
-    
+
     def get_success_url(self):
-            """Redirects users based on their type after successful login."""
-            user = self.request.user  # Access the authenticated user
+        """Redirects users based on their type after successful login."""
+        user = self.request.user  # Access the authenticated user
 
-            if user.is_authenticated:  # Ensure user is authenticated
-                if user.usr_type == "Admin":  # Check for admin type
-                    return reverse("land-admin")
-                else:
-                    return reverse("land-company")
-                
+        if user.is_authenticated:  # Ensure user is authenticated
+            if user.usr_type == "Admin":  # Check for admin type
+                return reverse("land-admin")
+            else:
+                return reverse("land-company")
 
-            # If user is not authenticated, fall back to the default behavior
-            return super().get_success_url()  # Inherit default behavior
-    
+        # If user is not authenticated, fall back to the default behavior
+        return super().get_success_url()  # Inherit default behavior
 
 
 class AdminHome(LoginRequiredMixin, ListView):
@@ -84,6 +87,7 @@ class AdminHome(LoginRequiredMixin, ListView):
         context['username'] = self.request.user.username
         return context
 
+
 class CompanyHome(LoginRequiredMixin, ListView):
     model = Resource
     template_name = 'base_app/home.html'
@@ -95,6 +99,7 @@ class CompanyHome(LoginRequiredMixin, ListView):
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
+
 
 class MyListView(LoginRequiredMixin, ListView):
     model = Resource
@@ -121,12 +126,14 @@ class MyListView(LoginRequiredMixin, ListView):
 
 class MyDetailView(LoginRequiredMixin, DetailView):
     model = Resource
-    template_name="base_app/resource_detail.html"
+    template_name = "base_app/resource_detail.html"
+    today_date = datetime.date.today()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
+        context['today_date'] = Resource.objects.model.available_date
 
         resource = self.get_object()
         # Check if the logged-in user is the creator of the resource
@@ -135,38 +142,50 @@ class MyDetailView(LoginRequiredMixin, DetailView):
         else:
             context['is_creator'] = False
         return context
-    
+
 
 class MyCreateView(LoginRequiredMixin, CreateView):
     model = Resource
-    
+
     fields = [
-        'resource_name', 'resource_type', 'description', 'available_date'
+        'resource_type', 'resource_name', 'description', 'available_date'
     ]
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
-    
+
+    def get_form(self, form_class=None):
+        form = super(MyCreateView, self).get_form(form_class)
+        form.fields['available_date'].widget = AdminDateWidget(
+            attrs={'type': 'date'})
+        return form
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
 
+
 class MyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Resource
     fields = [
-         'resource_name', 'resource_type', 'description', 'available_date'
+        'resource_name', 'resource_type', 'description', 'available_date'
     ]
 
     def test_func(self):
         curr_resource = self.get_object()
         if self.request.user == curr_resource.created_by:
             return True
-        else: 
-            return False 
+        else:
+            return False
 
+    def get_form(self, form_class=None):
+        form = super(MyUpdateView, self).get_form(form_class)
+        form.fields['available_date'].widget = AdminDateWidget(
+            attrs={'type': 'date'})
+        return form
 
 
 class MyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -177,24 +196,24 @@ class MyDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         curr_resource = self.get_object()
         if self.request.user == curr_resource.created_by:
             return True
-        else: 
-            return False 
-    
+        else:
+            return False
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
-                    
+
 
 class AdminUserMixin(LoginRequiredMixin, UserPassesTestMixin):
-    
+
     def test_func(self):
         return self.request.user.usr_type == 'Admin'
 
     def handle_no_permission(self):
         return HttpResponse("You are not an admin")
-    
+
 
 class AdminControlListView(AdminUserMixin, ListView):
     model = Resource_info
@@ -217,23 +236,25 @@ class AdminCreateTypeView(AdminUserMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
+
 
 class AdminDetailView(AdminUserMixin, DetailView):
     model = Resource_info
-    template_name="base_app/resource_detail.html"
+    template_name = "base_app/resource_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
-    
+
+
 class AdminDeleteView(AdminUserMixin, UserPassesTestMixin, DeleteView):
     model = Resource_info
     success_url = '/land-admin/listview'
@@ -242,14 +263,15 @@ class AdminDeleteView(AdminUserMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         if self.request.user.usr_type == "Admin":
             return True
-        else: 
-            return False 
+        else:
+            return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['usr_type'] = self.request.user.usr_type
         context['username'] = self.request.user.username
         return context
+
 
 class AdminUpdateView(AdminUserMixin, UserPassesTestMixin, UpdateView):
     model = Resource_info
@@ -257,14 +279,14 @@ class AdminUpdateView(AdminUserMixin, UserPassesTestMixin, UpdateView):
         'resource_type_name'
     ]
     success_url = '/land-admin/listview'
-    
+
     def test_func(self):
         if self.request.user.usr_type == "Admin":
             return True
-        else: 
-            return False 
-        
-    
+        else:
+            return False
+
+
 class MyCategoryView(LoginRequiredMixin, ListView):
     model = Resource
     template_name = 'base_app/category_view.html'
@@ -272,18 +294,27 @@ class MyCategoryView(LoginRequiredMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         category = self.kwargs.get('category')
-        if category: 
+        if category:
             return self.model.objects.filter(resource_type=category)
-        return self.model.objects.all()
+
+        queryset = super().get_queryset()
+
+        # Add a flag 'is_available' to each resource
+        for resource in queryset:
+            resource.is_available = resource.available_date <= datetime.date.today()
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         category = self.kwargs.get('category')
         desired = self.model.objects.filter(resource_type=category)
         count_of = desired.count()
         context = super().get_context_data(**kwargs)
-        context['category'] = Resource_info.objects.get(id=category).resource_type_name
+        context['category'] = Resource_info.objects.get(
+            id=category).resource_type_name
         context['status'] = Resource.objects.get(id=category).booking_status
         context['count_of'] = count_of
+        context['user'] = self.request.user
         context['username'] = self.request.user.username
         context['usr_type'] = self.request.user.usr_type
         return context
@@ -291,51 +322,55 @@ class MyCategoryView(LoginRequiredMixin, ListView):
 
 @login_required
 def book_resource(request, resource_id):
-  if request.method == 'POST':
-    resource = Resource.objects.get(pk=resource_id)
-    booking_date=datetime.date.today()
-    # Check if resource is available (implement your logic here)
-    if resource.booking_status == 1 and resource.available_date <= booking_date:  # Replace with your availability check method
-      booking = Booking.objects.create(
-          resource=resource,
-        #   res_id = resource.id,
-          res_type = str(resource.resource_type),
-          booked_by=request.user,  # Access the logged-in user
-          available_date=resource.available_date,  # Replace with your logic to get available date
-          booking_date=booking_date,  # Today's date
-          current_status=1,
-        #   owner = str(resource.created_by),
-          owner = resource.created_by.get_username(),  
-      )
-      print(resource.created_by)
-      booking.save()
-      resource.booking_status = 0
-      resource.save()
-    #   return redirect('bookresource', messages=['Resource booked successfully!'])
-      return redirect('booking-view')
-    else:
-      # Redirect with error message - resource is already booked
+    if request.method == 'POST':
+        resource = Resource.objects.get(pk=resource_id)
+        booking_date = datetime.date.today()
+        # Check if resource is available (implement your logic here)
+        # Replace with your availability check method
+        if resource.booking_status == 1 and resource.available_date <= booking_date and resource.created_by != request.user:
+            booking = Booking.objects.create(
+                resource=resource,
+                #   res_id = resource.id,
+                res_type=str(resource.resource_type),
+                booked_by=request.user,  # Access the logged-in user
+                # Replace with your logic to get available date
+                available_date=resource.available_date,
+                booking_date=booking_date,  # Today's date
+                current_status=1,
+                #   owner = str(resource.created_by),
+                owner=resource.created_by.get_username(),
+            )
+            print(resource.created_by)
+            booking.save()
+            resource.booking_status = 0
+            resource.save()
+        #   return redirect('bookresource', messages=['Resource booked successfully!'])
+            return redirect('booking-view')
+        else:
+            # Redirect with error message - resource is already booked
 
-      return redirect('land-company')
-    #   return redirect('listview', messages=['Resource is not available'])
-  else:
-    # return redirect('listview')  # Redirect for non-POST requests
-    return HttpResponse("Method is not POST.")
+            return redirect('land-company')
+        #   return redirect('listview', messages=['Resource is not available'])
+    else:
+        # return redirect('listview')  # Redirect for non-POST requests
+        return HttpResponse("Method is not POST.")
 
 
 @login_required
 def release_resource(request, my_id):
     if request.method == 'POST':
         resource = Resource.objects.get(id=my_id)
-        stat = Booking.objects.filter(resource_id=my_id).order_by('-created_at').first()
+        stat = Booking.objects.filter(
+            resource_id=my_id).order_by('-created_at').first()
         # print(Booking.models.objects.current_status)
         if resource.booking_status == 0:  # Assuming 0 indicates the resource is booked
             resource.booking_status = 1  # Marking the resource as available
             resource.release_date = datetime.date.today().isoformat()
-            resource.available_date = datetime.date.today().isoformat()  # Setting release date as today's date
+            # Setting release date as today's date
+            resource.available_date = datetime.date.today().isoformat()
             resource.save()
             messages.success(request, 'Resource released successfully!')
-            
+
             stat.current_status = 0
             stat.release_date = datetime.date.today().isoformat()
             stat.available_date = datetime.date.today().isoformat()
@@ -349,14 +384,13 @@ def release_resource(request, my_id):
         return HttpResponse("Method is not POST.")
 
 
-
 # View my bookings and download them in XLS file.
 
 class BookingView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'base_app/my_bookings.html'
     context_object_name = 'resources'
-    ordering=['-current_status']
+    ordering = ['-current_status']
 
     def get_queryset(self):
         qs = super().get_queryset().filter(booked_by=self.request.user)
@@ -377,9 +411,10 @@ class BookingView(LoginRequiredMixin, ListView):
         response['Content-Disposition'] = f"attachment; filename=posts.xls"
         return response
 
+
 class MyResources(LoginRequiredMixin, ListView):
     model = Resource
-    template_name='base_app/my_list.html'
+    template_name = 'base_app/my_list.html'
     context_object_name = 'resources'
 
     def get_queryset(self):
@@ -392,24 +427,70 @@ class MyResources(LoginRequiredMixin, ListView):
         context['usr_type'] = self.request.user.usr_type
         return context
 
+
 @login_required
 def statistics_view(request):
     current_user = request.user
-
+    today_date = datetime.date.today()
     total_resources = Resource.objects.count
+    total_resource_types = Resource_info.objects.count()
     my_total_resources = Resource.objects.filter(created_by=current_user).count
+    my_total_resources_booked = Resource.objects.filter(
+        created_by=current_user, booking_status=0).count
+    available_resources = Resource.objects.filter(
+        booking_status=1,
+        available_date__lte=today_date
+    ).count
     booked_till_date = Booking.objects.filter(booked_by=current_user).count
-    current_booked = Booking.objects.filter(booked_by=current_user, current_status=True).count
+    current_booked = Booking.objects.filter(
+        booked_by=current_user, current_status=True).count
     total_users = CustomUsers.objects.filter(usr_type="Company").count
 
     context = {
-        'my_total_resources' : my_total_resources,
-        'total_resources' : total_resources,
-        'booked_till_date' : booked_till_date, 
-        'current_booked' : current_booked,
-        'usr_type' : current_user.usr_type,
-        'username' : current_user.username,
+        'my_total_resources': my_total_resources,
+        'my_total_resources_booked': my_total_resources_booked,
+        'total_resources': total_resources,
+        'total_resource_types': total_resource_types,
+        'available_resources': available_resources,
+        'booked_till_date': booked_till_date,
+        'current_booked': current_booked,
+        'usr_type': current_user.usr_type,
+        'username': current_user.username,
         'total_users': total_users,
     }
 
     return render(request, 'base_app/home.html', context)
+
+
+class CompanyDataSet(AdminUserMixin, ListView):
+    model = CustomUsers
+    template_name = 'base_app/admin_home.html'
+    context_object_name = 'companies'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        qs = super().get_queryset().filter(usr_type="Company")
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+
+        total_resources = Resource.objects.count()
+        total_resource_types = Resource_info.objects.count()
+        my_total_resources = Resource.objects.filter(
+            created_by=current_user).count()
+        my_total_resources_booked = Resource.objects.filter(
+            created_by=current_user, booking_status=0).count()
+        booked_till_date = Booking.objects.filter(
+            booked_by=current_user).count()
+        current_booked = Booking.objects.filter(
+            booked_by=current_user, current_status=True).count()
+        total_users = CustomUsers.objects.filter(usr_type="Company").count()
+
+        context['total_resources'] = total_resources
+        context['total_resource_types'] = total_resource_types
+        context['usr_type'] = current_user.usr_type
+        context['username'] = current_user.username
+        context['total_users'] = total_users
+
+        return context
