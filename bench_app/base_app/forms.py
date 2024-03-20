@@ -11,6 +11,7 @@ usr_choice = [
     (CMP, "Company")
 ]
 
+
 class UserRegisterForm(UserCreationForm):
     # here only add fields other than default form field like username and password
     email = forms.EmailField(required=True)
@@ -18,8 +19,8 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = CustomUsers
         fields = [
-            'username', 'email', 'usr_type', 'password1', 'password2', 
+            'username', 'email', 'usr_type', 'password1', 'password2',
         ]
         widgets = {
-            'usr_type': forms.RadioSelect(choices=[(ADM, "Admin"),(CMP, "Company")]),
+            'usr_type': forms.RadioSelect(choices=[(ADM, "Admin"), (CMP, "Company")]),
         }

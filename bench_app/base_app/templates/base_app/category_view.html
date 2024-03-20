@@ -1,67 +1,71 @@
-{% extends 'base_app/home.html' %}
-
-{% block content %}
+{% extends 'base_app/home.html' %} {% block content %}
 <div class="container-fluid">
-    <div class="inline justify-content-between align-middle">
-        <div>
-            <h1>{{category}}</h1>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-            <a class="btn btn-outline-primary m-0" href="{% url 'land-company' %}">Back to Dashboard</a>
-            <h3 class="text-muted">Count : {{count_of}}</h3>
-        </div>
+  <div class="inline justify-content-between align-middle">
+    <div>
+      <h1>{{category}}</h1>
     </div>
-    <table class="table table-striped p-1" style="table-layout: fixed; width: 100%;">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Resource Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Creator</th>
-                <th scope="col">Status</th>
-                <th scope="col">Available From</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for resource in resources %}
-            <tr>
-                <td><a href="{% url 'detailview' resource.id %}">{{ resource.resource_name }}</a></td>
-                <td>{{ resource.description }}</td>
-                <td>{{ resource.created_by }}</td>
+    <div class="d-flex justify-content-between mb-3">
+      <a class="btn btn-outline-primary m-0" href="{% url 'land-company' %}"
+        >Back to Dashboard</a
+      >
+      <h3 class="text-muted">Count : {{count_of}}</h3>
+    </div>
+  </div>
+  <table
+    class="table table-striped p-1"
+    style="table-layout: fixed; width: 100%"
+  >
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Resource Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Creator</th>
+        <th scope="col">Status</th>
+        <th scope="col">Available From</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for resource in resources %}
+      <tr>
+        <td>
+          <a href="{% url 'detailview' resource.id %}"
+            >{{ resource.resource_name }}</a
+          >
+        </td>
+        <td>{{ resource.description }}</td>
+        <td>{{ resource.created_by }}</td>
 
-                {% if resource.created_by == user %}
-                    <td>  Available </td>
-                    <td>{{ resource.available_date }}</td>
-                    <td class="text-danger p-1" > Cannot book own resources </td>
-                {% else %}
-                    {% if resource.booking_status == 1 %}
-                    {% if resource.is_available %}
-                    <td class="text-success">  Available </td>
-                    <td>{{ resource.available_date }}</td>
-                        <td>
-                            <form action="{% url 'bookresource' resource.id %}" method="post" >
-                                {% csrf_token %}
-                                <input type="hidden" name="resource_id" value="{{ resource.id }}">
-                                <button type="submit" class="btn btn-success">Book for me</button>
-                            </form>
-                        </td>
-                        {% else %}
-                        <td class="text-muted">  Unavailable </td>
-                        <td>{{ resource.available_date }}</td>
-                        <td></td>
-                        {% endif %}
-                    {% else %}
-                        <td class="text-muted"> Unavailable </td>    
-                        <td> -- <td>
-                    {% endif %}
-                {% endif %}
-            </tr>
-            
-            {% endfor %}
-            
-        </tbody>
-        
-    </table>
-    <a class="btn btn-outline-primary mt-3" href="{% url 'land-company' %}">Back to Dashboard</a>
+        {% if resource.created_by == user %}
+        <td>Available</td>
+        <td>{{ resource.available_date }}</td>
+        <td class="text-danger p-1">Cannot book own resources</td>
+        {% else %} {% if resource.booking_status == 1 %} {% if
+        resource.is_available %}
+        <td class="text-success">Available</td>
+        <td>{{ resource.available_date }}</td>
+        <td>
+          <form action="{% url 'bookresource' resource.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="resource_id" value="{{ resource.id }}" />
+            <button type="submit" class="btn btn-success">Book for me</button>
+          </form>
+        </td>
+        {% else %}
+        <td class="text-muted">Unavailable</td>
+        <td>{{ resource.available_date }}</td>
+        <td></td>
+        {% endif %} {% else %}
+        <td class="text-muted">Unavailable</td>
+        <td>--</td>
+        <td>{% endif %} {% endif %}</td>
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+  <a class="btn btn-outline-primary mt-3" href="{% url 'land-company' %}"
+    >Back to Dashboard</a
+  >
 </div>
 {% endblock %}
